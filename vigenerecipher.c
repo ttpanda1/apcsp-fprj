@@ -1,8 +1,15 @@
 #include <stdio.h>
+#include <string.h>
 
-char abcstring[] = "abcdefghijklmnopqrstuvwxyz"
+char keystring[] = "encryptencryptencrypt";
+char charstring[] = "testingthiscode";
+char output[100];
 
 int main() {
-  char teststring[] = "test enctyption code";
-  for ( i = 0, i = 
-
+  for ( int i = 0; strlen(charstring) > i; i++) {
+    char tm = charstring[i] + keystring[i] - 194;
+    int tmp = tm % 26;
+    output[i] = 'a' + tmp;
+    printf("%c", output[i]);
+  }
+}
