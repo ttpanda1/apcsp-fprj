@@ -1,52 +1,141 @@
+
 #include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
 
 char table[26][26];
 
-void createTable()
+void createTable() {
+    char *letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    for ( int i = 0; i < 26; i++ ) {
+        for ( int j = 0; j < 26; j++ ) {
+            table[i][j] = letters[(i + j) % 26];
+        }
+    }
+}
+
+char *encryptMessage(char *plainText, char *keyWords)
 {
-  int c = 0;
-  int tmp = 0;
-  int b = 0;
-  int c2 = 0;
-  int num = 0;
-  int t = 0;
+    char *keyText = malloc(strlen(plainText) * sizeof(char) + 1);
+    char *tmpText = malloc((strlen(plainText) + strlen(keyWords))* sizeof(char) + 1);
+    char *eMessage = malloc(strlen(plainText) * sizeof(char) + 1);
 
-  for ( int i = 0; i < 26; i++ )
-  {
-    tmp = c % 26;
-    b = tmp + 65;
+    strcpy(tmpText, keyWords);
+    strcpy(tmpText + strlen(keyWords) * sizeof(char), plainText);
 
-    for ( int a = 0; a < 26; a++ )
+    int j = 0;
+    for(int i=0; i < strlen(plainText); i++)
     {
-      if ( t == 0 ) {
-        num = b + c2;
-      }
+        if (isalpha(plainText[i]))
+        {
+            while( !isalpha(tmpText[j])) {
+                j++;
+            }
 
-      if ( num > 90 ) {
-        num = 65;
-        if ( t == 0 ) {
-          c2 = 0;
+            keyText[i] = tmpText[j];
+
+            j++;
+        }
+        else
+        {
+
+            keyText[i] = plainText[i];
+        }
+
+        keyText[i] = toupper(keyText[i]);
+    }
+
+    for ( int i = 0; i < strlen(plainText); i++ ) {
+        if (isalpha(plainText[i])) {
+            int rowNum = keyText[i] - 65;
+            int colNum = plainText[i] - 65;
+
+            eMessage[i] = table[rowNum][colNum];
         }
         else {
-          num = num + 65;
+            eMessage[i] = plainText[i];
         }
-        t = 1;
-      }
-
-      table[a][i] = num;
-      printf("%c", table[a][i]);
-      c2++;
     }
-    printf("\n");
-    c2 = 0;
-    c = c + 1;
-    t = 0;
-  }
+
+    return eMessage;
 }
 
-int main()
+char *decryptMessage(char *eMessage, char *keyWords) {
+    char *dMessage = malloc(strlen(eMessage) * sizeof(char) + 1);
+    char *tmpKey = malloc((strlen(eMessage) + strlen(keyWords))* sizeof(char) + 1);
+
+    strcpy(tmpKey,keyWords);
+
+    for ( int i = 0; i < strlen(eMessage); i++ ) {
+        tmpKey[i] = toupper(tmpKey[i]);
+
+        if (isalpha(eMessage[i])) {
+            dMessage[i] = eMessage[i] - tmpKey[i];
+
+            if ( dMessage[i] < 0 ) {
+                dMessage[i] = dMessage[i] + 26 + 65;
+            }
+            else {
+                dMessage[i] = dMessage[i] + 65;
+            }
+
+            char tmp = dMessage[i];
+            strncat(tmpKey, &tmp, 1);
+        }
+        else {
+            dMessage[i] = eMessage[i];
+
+            char tmp = tmpKey[i];
+            strncat(tmpKey, &tmp, 1);
+        }
+    }
+
+    return dMessage;
+}
+
+int main(int argc, char* argv[])
 {
-  printf("Hello world\n");
+    createTable();
 
-  createTable();
+    /*char input[256], ED[256];
+    int t = 0;
+
+    while ( t == 0 ) {
+        printf("Encrypt or Decrypt?\n");
+        fgets(input, 256, stdin);
+        sscanf(input, "%s", ED);
+
+        if ( ED == "Encrypt" ) {
+            t = 1;
+            //break;
+        }
+        else if ( ED == "Decrypt" ) {
+            t = 2;
+            //break;
+        }
+    }*/
+
+    char inputM[256], message[256];
+    char inputK[256], key[256];
+
+    printf("Message: \n");
+    fgets(inputM, 256, stdin);
+    sscanf(inputM, "%s", message);
+
+    printf("Key: \n");
+    fgets(inputK, 256, stdin);
+    sscanf(inputK, "%s", key);
+
+//    if ( t == 1 ) {
+        printf("Encrypted Message: %s\r\n", encryptMessage(message, key));
+//    }
+
+//    if ( t == 2 ) {
+        printf("Decyrpted Message: %s\r\n", decryptMessage(message, key));
+//    }
+
+    return 0;
 }
+
+
