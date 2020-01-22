@@ -28,6 +28,10 @@ char *encryptMessage(char *plainText, char *keyWords)
     strcpy(tmpText, keyWords);
     strcpy(tmpText + strlen(keyWords), plainText);
 
+    for ( int i = 0; i < strlen(tmpText); i++ ) {
+        tmpText[i] = toupper(tmpText[i]);
+    }
+
     int j = 0;
     for( int i = 0; i < strlen(plainText); i++ )
     {
@@ -58,6 +62,11 @@ char *decryptMessage(char *eMessage, char *keyWords) {
 
     strcpy(tmpKey,keyWords);
     strcpy(dMessage,eMessage);
+
+    for ( int i = 0; i < strlen(tmpKey); i++ ) {
+	tmpKey[i] = toupper(tmpKey[i]);
+    }
+
    
     int j=0;
     for ( int i = 0; i < strlen(eMessage); i++ ) {
@@ -101,9 +110,6 @@ int main(int argc, char* argv[])
 	  inputMessage =  argv[3];  
         }
 
-	printf("%s\n", argv[1]);
-	printf("%s %s %s\n", input1, inputKey, inputMessage);
-	
         if ( strcmp(input1, "Encrypt") == 0) {
             printf("Encrypted Message: %s\r\n", encryptMessage(inputMessage, inputKey));
 	}
