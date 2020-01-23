@@ -6,6 +6,40 @@ int k;
 char output[200];
 char charstring[200];
 
+char *Encrypt(int det, char *charstring, char *keystring) {
+  if ( det == 0 ) {
+  for ( int i = 0; strlen(charstring) > i; i++) {
+     if ( charstring[i] > 96 ) {
+     if ( 123 > charstring[i] ) {
+      char tm = charstring[i] + keystring[i] - 194;
+      int tmp = tm % 26;
+      output[i] = 'a' + tmp;
+     }
+     }
+     else {
+       output[i] = charstring[i];
+     }
+  }
+}
+else {
+
+  for ( int i = 0; strlen(charstring) > i; i++) {
+     if ( charstring[i] > 96 ) {
+     if ( 123 > charstring[i] ) {
+      char tm = 26 + charstring[i] - keystring[i];
+      int tmp = tm % 26;
+      output[i] = 'a' + tmp;
+    }
+    }
+    else {
+      output[i] = charstring[i];
+    }
+  }
+}
+return output;
+}
+
+
 int main(int argc, char* argv[]) {
 
 // constructing the message to encrypt/decrypt
@@ -18,6 +52,7 @@ if (argc >= 5) {
 else {
   char* charstring = argv[3];
 }
+
 
   char* input1;
   char* inputKey;
@@ -32,23 +67,21 @@ else {
   if ( strcmp(input1, "Decrypt") == 0) {
     det = 1;
   }
-    return 0;
 
 
 // converts everyting to lower case
 for ( int i = 0; strlen(charstring) > i; i++) {
 
-  if ( 95 > charstring[i] ) {
-    if ( 32 != charstring[i] ) {
+  if ( 91 > charstring[i] ) {
+    if ( charstring[i] > 64 ) {
       char tmp = charstring[i] + 32;
       charstring[i] = tmp;
     }
   }
 }
 
-printf("%s\n", charstring);
 
-char* key = argv[1];
+char* key = argv[2];
 
 // constructing the key
   for ( int i = 0; strlen(charstring) > i; i++) {
@@ -75,35 +108,22 @@ char tmp[200];
     keystring[i] = tmp[i];
   }
 
+for ( int i = 0; strlen(keystring) > i; i++) {
+
+  if ( 95 > keystring[i] ) {
+    if ( 32 != keystring[i] ) {
+      char tmp = keystring[i] + 32;
+      keystring[i] = tmp;
+    }
+  }
+}
+
 // actual encryption
 
-if ( det == 0 ) {
-  for ( int i = 0; strlen(charstring) > i; i++) {
-     if (charstring[i] != ' ') {
-      char tm = charstring[i] + keystring[i] - 194;
-      int tmp = tm % 26;
-      output[i] = 'a' + tmp;
-    }
-    else {
-      output[i] = ' ';
-    }
-  }
-  printf("%s\n", output);
-}
-else if ( det == 1 ) {
-   for ( int i = 0; strlen(charstring) > i; i++) {
-     if (charstring[i] != ' ') {
-      char tm = charstring[i] - keystring[i];
-      int tmp = tm % 26;
-      output[i] = 'a' + tmp;
-    }
-    else {
-      output[i] = ' ';
-    }
-  }
-  printf("%s\n", output);
-}
+printf("Plain Text: %s\nCipher Text: %s\r\n", charstring, Encrypt(det, charstring, keystring));
 
 
 
 }
+
+
